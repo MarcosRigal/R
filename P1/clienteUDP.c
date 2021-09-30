@@ -66,7 +66,7 @@ int main(int argc, char const *argv[])
 		{
 			printf("Error al solicitar el servicio\n");
 			sleep(atoi(argv[2]));
-		}
+		}//Usar select
 		else
 		{
 			/*----------------------------------------------------------------------
