@@ -1,16 +1,16 @@
-#include <stdio.h>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
 #include <arpa/inet.h>
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/socket.h>
 /* --------------------------------------------------------------------------------------
  
- Envía un número aleatorio al servidor, quien el devuelve el número incrementado
+ Envï¿½a un nï¿½mero aleatorio al servidor, quien el devuelve el nï¿½mero incrementado
 
 ---------------------------------------------------------------------------------------- */
  
