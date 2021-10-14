@@ -84,13 +84,11 @@ int main(int argc, char const *argv[])
     Longitud_Servidor = sizeof(Servidor);
 
     /*
-    Parte a cambiar para que envie una cadena
-    /////////////////////////////////////////////////////////
+        Leemos la cadena a enviar
     */
-    int Datos;
-    srand(time(NULL));
-    Datos = rand() % 20;
-    printf("Envio %d\n", Datos);
+    char Cadena[256];
+    scanf("%s", Cadena); /* Aleatorio entre 0 y 19 */
+    printf("Envio %s\n", Cadena);
 
     ////////////////////////////////////////////////////////
 
@@ -105,7 +103,7 @@ int main(int argc, char const *argv[])
         /*
 		    Se envía mensaje al Servidor
 	    */
-        int enviado = sendto(Socket_Cliente, (char *)&Datos, sizeof(Datos), 0,
+        int enviado = sendto(Socket_Cliente, (char *)&Cadena, sizeof(Cadena), 0,
                              (struct sockaddr *)&Servidor, Longitud_Servidor);
 
         /*
@@ -139,17 +137,17 @@ int main(int argc, char const *argv[])
             FD_SET(0, &readfds);
             FD_SET(Socket_Cliente, &readfds);
 
-            int enviado = sendto(Socket_Cliente, (char *)&Datos, sizeof(Datos), 0,
+            int enviado = sendto(Socket_Cliente, (char *)&Cadena, sizeof(Cadena), 0,
                                  (struct sockaddr *)&Servidor, Longitud_Servidor);
         }
 
         else
         {
-            int recibido = recvfrom(Socket_Cliente, (char *)&Datos, sizeof(Datos), 0,
+            int recibido = recvfrom(Socket_Cliente, (char *)&Cadena, sizeof(Cadena), 0,
                                     (struct sockaddr *)&Servidor, &Longitud_Servidor);
 
             if (recibido > 0)
-                printf("Leido %d\n", Datos);
+                printf("Leido %s\n", Cadena);
             else
                 printf("Error al leer del servidor\n");
 

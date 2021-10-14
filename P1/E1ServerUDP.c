@@ -1,14 +1,41 @@
+#include <time.h>
 #include <stdio.h>
 #include <netdb.h>
+#include <string.h>
+#include <locale.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-/*
- * El servidor ofrece el servicio de incrementar un n\ufffdmero recibido de un cliente
- */
+void tiempo(char *cadena)
+{
+
+    time_t tiempo;
+    struct tm *stTm;
+
+    tiempo = time(NULL);
+
+    setlocale(LC_ALL, "");
+
+    stTm = localtime(&tiempo);
+
+    if (strcmp(cadena, "DAY") == 0)
+    {
+        strftime(cadena, 256, "%A, %d de %B", stTm);
+    }
+
+    else if (strcmp(cadena, "TIME") == 0)
+    {
+        strftime(cadena, 256, "%H:%M:%S", stTm);
+    }
+
+    else if (strcmp(cadena, "DAYTIME") == 0)
+    {
+        strftime(cadena, 256, "%A, %d de %B; %H:%M:%S", stTm);
+    }
+}
 
 int main()
 {
@@ -17,7 +44,7 @@ int main()
 	-----------------------------------------------------*/
     int Socket_Servidor;
     struct sockaddr_in Servidor;
-    int contador = 0;
+    char Cadena[256];
 
     /* -----------------------------------------------------
    		Informaci\ufffdn del Cliente
@@ -65,7 +92,7 @@ int main()
         /* -----------------------------------------------------------------
 			Esperamos la llamada de alg\ufffdn cliente
 		-------------------------------------------------------------------*/
-        int recibido = recvfrom(Socket_Servidor, &contador, sizeof(contador), 0,
+        int recibido = recvfrom(Socket_Servidor, (char *)&Cadena, sizeof(Cadena), 0,
                                 (struct sockaddr *)&Cliente, &Longitud_Cliente);
 
         /* -----------------------------------------------------------------
@@ -73,16 +100,19 @@ int main()
 		-------------------------------------------------------------------*/
         if (recibido > 0)
         {
-            /*-----------------------------------------------------------------
-				Incrementamos el valor que nos ha enviado el cliente 
-				------------------------------------------------------------------*/
-            printf("Recibido %d, envio %d\n", contador, contador + 1);
-            contador++;
-
+            printf("Recibido: %s enviando respuesta...\n", Cadena);
+            if (strcmp(Cadena, "DAY") == 0 || strcmp(Cadena, "TIME") == 0 || strcmp(Cadena, "DAYTIME") == 0)
+            {
+                tiempo(Cadena);
+            }
+            else
+            {
+                strcpy(Cadena, "Error, no se ha encontrado el servicio solicitado. Los servicios ofrecidos son DAY, TIME y DAYTIME\n");
+            }
             /* ------------------------------------------------------------------
-				Devolvemos el n\ufffdmero incrementado al cliente
+				Devolvemos el resultado
 				--------------------------------------------------------------------*/
-            int enviado = sendto(Socket_Servidor, &contador, sizeof(contador), 0,
+            int enviado = sendto(Socket_Servidor, (char *)&Cadena, sizeof(Cadena), 0,
                                  (struct sockaddr *)&Cliente, Longitud_Cliente);
         }
     }
