@@ -11,42 +11,42 @@
 #include <time.h>
 #include <arpa/inet.h>
 
-#define MSG_SIZE 250
-#define MAX_CLIENTS 50
+#define MSG_SIZE 350
+#define MAX_CLIENTS 30
 
 /*
  * El servidor ofrece el servicio de un chat
  */
 
-void manejador(int signum);
+void exitHandler(int signum);
 void salirCliente(int socket, fd_set *readfds, int *numClientes, int arrayClientes[]);
+
+/*---------------------------------------------------- 
+		Descriptor del socket y buffer de datos                
+	-----------------------------------------------------*/
+int Server_Socket, New_Server_Socket;
+struct sockaddr_in sockname, from;
+char buffer[MSG_SIZE];
+socklen_t from_len;
+fd_set readfds, auxfds;
+int salida;
+int arrayClientes[MAX_CLIENTS];
+int numClientes = 0;
+//contadores
+int i, j, k;
+int recibidos;
+char identificador[MSG_SIZE];
+
+int on, ret;
 
 int main()
 {
 
-   /*---------------------------------------------------- 
-		Descriptor del socket y buffer de datos                
-	-----------------------------------------------------*/
-   int sd, new_sd;
-   struct sockaddr_in sockname, from;
-   char buffer[MSG_SIZE];
-   socklen_t from_len;
-   fd_set readfds, auxfds;
-   int salida;
-   int arrayClientes[MAX_CLIENTS];
-   int numClientes = 0;
-   //contadores
-   int i, j, k;
-   int recibidos;
-   char identificador[MSG_SIZE];
-
-   int on, ret;
-
    /* --------------------------------------------------
 		Se abre el socket 
 	---------------------------------------------------*/
-   sd = socket(AF_INET, SOCK_STREAM, 0);
-   if (sd == -1)
+   Server_Socket = socket(AF_INET, SOCK_STREAM, 0);
+   if (Server_Socket == -1)
    {
       perror("No se puede abrir el socket cliente\n");
       exit(1);
@@ -59,13 +59,13 @@ int main()
    // mismo puerto. De lo contrario habrÌa que esperar a que el puerto
    // quedase disponible (TIME_WAIT en el caso de TCP)
    on = 1;
-   ret = setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+   ret = setsockopt(Server_Socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
    sockname.sin_family = AF_INET;
-   sockname.sin_port = htons(2000);
+   sockname.sin_port = htons(2050);
    sockname.sin_addr.s_addr = INADDR_ANY;
 
-   if (bind(sd, (struct sockaddr *)&sockname, sizeof(sockname)) == -1)
+   if (bind(Server_Socket, (struct sockaddr *)&sockname, sizeof(sockname)) == -1)
    {
       perror("Error en la operación bind");
       exit(1);
@@ -78,7 +78,7 @@ int main()
    	----------------------------------------------------------------------*/
    from_len = sizeof(from);
 
-   if (listen(sd, 1) == -1)
+   if (listen(Server_Socket, 1) == -1)
    {
       perror("Error en la operación de listen");
       exit(1);
@@ -87,11 +87,11 @@ int main()
    //Inicializar los conjuntos fd_set
    FD_ZERO(&readfds);
    FD_ZERO(&auxfds);
-   FD_SET(sd, &readfds);
+   FD_SET(Server_Socket, &readfds);
    FD_SET(0, &readfds);
 
    //Capturamos la señal SIGINT (Ctrl+c)
-   signal(SIGINT, manejador);
+   signal(SIGINT, exitHandler);
 
    /*-----------------------------------------------------------------------
 		El servidor acepta una petición
@@ -115,10 +115,10 @@ int main()
             if (FD_ISSET(i, &auxfds))
             {
 
-               if (i == sd)
+               if (i == Server_Socket)
                {
 
-                  if ((new_sd = accept(sd, (struct sockaddr *)&from, &from_len)) == -1)
+                  if ((New_Server_Socket = accept(Server_Socket, (struct sockaddr *)&from, &from_len)) == -1)
                   {
                      perror("Error aceptando peticiones");
                   }
@@ -126,19 +126,19 @@ int main()
                   {
                      if (numClientes < MAX_CLIENTS)
                      {
-                        arrayClientes[numClientes] = new_sd;
+                        arrayClientes[numClientes] = New_Server_Socket;
                         numClientes++;
-                        FD_SET(new_sd, &readfds);
+                        FD_SET(New_Server_Socket, &readfds);
 
                         strcpy(buffer, "Bienvenido al chat\n");
 
-                        send(new_sd, buffer, sizeof(buffer), 0);
+                        send(New_Server_Socket, buffer, sizeof(buffer), 0);
 
                         for (j = 0; j < (numClientes - 1); j++)
                         {
 
                            bzero(buffer, sizeof(buffer));
-                           sprintf(buffer, "Nuevo Cliente conectado: %d\n", new_sd);
+                           sprintf(buffer, "Nuevo Cliente conectado: %d\n", New_Server_Socket);
                            send(arrayClientes[j], buffer, sizeof(buffer), 0);
                         }
                      }
@@ -146,8 +146,8 @@ int main()
                      {
                         bzero(buffer, sizeof(buffer));
                         strcpy(buffer, "Demasiados clientes conectados\n");
-                        send(new_sd, buffer, sizeof(buffer), 0);
-                        close(new_sd);
+                        send(New_Server_Socket, buffer, sizeof(buffer), 0);
+                        close(New_Server_Socket);
                      }
                   }
                }
@@ -160,17 +160,7 @@ int main()
                   //Controlar si se ha introducido "SALIR", cerrando todos los sockets y finalmente saliendo del servidor. (implementar)
                   if (strcmp(buffer, "SALIR\n") == 0)
                   {
-
-                     for (j = 0; j < numClientes; j++)
-                     {
-                        bzero(buffer, sizeof(buffer));
-                        strcpy(buffer, "Desconexión servidor\n");
-                        send(arrayClientes[j], buffer, sizeof(buffer), 0);
-                        close(arrayClientes[j]);
-                        FD_CLR(arrayClientes[j], &readfds);
-                     }
-                     close(sd);
-                     exit(-1);
+                     exitHandler(SIGINT);
                   }
                   //Mensajes que se quieran mandar a los clientes (implementar)
                }
@@ -216,7 +206,7 @@ int main()
       }
    }
 
-   close(sd);
+   close(Server_Socket);
    return 0;
 }
 
@@ -246,10 +236,18 @@ void salirCliente(int socket, fd_set *readfds, int *numClientes, int arrayClient
          send(arrayClientes[j], buffer, sizeof(buffer), 0);
 }
 
-void manejador(int signum)
+void exitHandler(int signum)
 {
-   printf("\nSe ha recibido la señal sigint\n");
-   signal(SIGINT, manejador);
-
-   //Implementar lo que se desee realizar cuando ocurra la excepción de ctrl+c en el servidor
+   printf("\nApagando el servidor...\n");
+   signal(SIGINT, exitHandler);
+   for (j = 0; j < numClientes; j++)
+   {
+      bzero(buffer, sizeof(buffer));
+      strcpy(buffer, "Desconectado por el servidor\n");
+      send(arrayClientes[j], buffer, sizeof(buffer), 0);
+      close(arrayClientes[j]);
+      FD_CLR(arrayClientes[j], &readfds);
+   }
+   close(Server_Socket);
+   exit(-1);
 }
