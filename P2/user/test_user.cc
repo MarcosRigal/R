@@ -3,6 +3,13 @@
 
 using namespace std;
 
+TEST(User, Socket)
+{
+    User user;
+    user.setUserSocket(5);
+    EXPECT_EQ(user.getUserSocket(), 5);
+}
+
 TEST(User, Name)
 {
     User user;
