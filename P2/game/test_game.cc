@@ -28,3 +28,9 @@ TEST(Game, ScorePlayer2)
     Game game;
     EXPECT_EQ(game.getScorePlayer2(), 0);
 }
+
+TEST(Game, ScorePlayer2)
+{
+    Game game;
+    EXPECT_EQ(game.getNumberOfPlayers(), 0);
+}

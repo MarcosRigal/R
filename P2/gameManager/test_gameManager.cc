@@ -43,3 +43,12 @@ TEST(GameManager, GamesVector)
     EXPECT_EQ(gameManager->getGames()[0].getSocketPlayer1(), 1);
     EXPECT_EQ(gameManager->getGames()[1].getSocketPlayer2(), 2);
 }
+
+TEST(GameManager, numberOfGames)
+{
+    GameManager *gameManager = GameManager::getInstance();
+
+    EXPECT_EQ(gameManager->getNumberOfGames(), 0);
+    gameManager->setNumberOfGames(1);
+    EXPECT_EQ(gameManager->getNumberOfGames(), 1);
+}

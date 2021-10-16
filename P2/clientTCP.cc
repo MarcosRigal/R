@@ -33,7 +33,7 @@ int main()
    sd = socket(AF_INET, SOCK_STREAM, 0);
    if (sd == -1)
    {
-      perror("No se puede abrir el socket cliente\n");
+      perror("–ERR. No se puede abrir el socket cliente\n");
       exit(1);
    }
 
@@ -52,7 +52,7 @@ int main()
 
    if (connect(sd, (struct sockaddr *)&sockname, len_sockname) == -1)
    {
-      perror("Error de conexión");
+      perror("–ERR. Al establecer la conexión");
       exit(1);
    }
 
@@ -80,10 +80,10 @@ int main()
 
          printf("\n%s\n", buffer);
 
-         if (strcmp(buffer, "Demasiados clientes conectados\n") == 0)
+         if (strcmp(buffer, "–ERR. Demasiados clientes conectados\n") == 0)
             fin = 1;
 
-         if (strcmp(buffer, "Desconectado por el servidor\n") == 0)
+         if (strcmp(buffer, "–ERR. Desconectado por el servidor\n") == 0)
             fin = 1;
       }
       else
