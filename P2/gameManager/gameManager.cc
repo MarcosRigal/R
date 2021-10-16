@@ -2,4 +2,18 @@
 
 using namespace std;
 
-GameManager static GameManager::getInstance();
+GameManager *GameManager::instance = nullptr;
+
+GameManager::GameManager()
+{
+    // do init stuff
+}
+
+GameManager *GameManager::getInstance()
+{
+    if (instance == nullptr)
+    {
+        instance = new GameManager();
+    }
+    return instance;
+}

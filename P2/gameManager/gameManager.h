@@ -6,12 +6,11 @@ using namespace std;
 class GameManager
 {
 private:
-    static GameManager *instance = NULL;
-
     GameManager();
+    static GameManager *instance; // GameManager instance
 
 public:
-    static GameManager getInstance();
+    static GameManager *getInstance();
 };
 
 #endif
