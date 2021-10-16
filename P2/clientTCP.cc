@@ -83,7 +83,7 @@ int main()
          if (strcmp(buffer, "Demasiados clientes conectados\n") == 0)
             fin = 1;
 
-         if (strcmp(buffer, "Desconexión servidor\n") == 0)
+         if (strcmp(buffer, "Desconectado por el servidor\n") == 0)
             fin = 1;
       }
       else
