@@ -37,6 +37,8 @@ public:
     inline void setScorePlayer2(int scorePlayer2) { scorePlayer2_ = scorePlayer2; }
 
     inline void setNumberOfPlayers(int numberOfPlayers) { numberOfPlayers_ = numberOfPlayers; }
+
+    bool addPlayer(int socketPlayer);
 };
 
 #endif

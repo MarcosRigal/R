@@ -29,8 +29,21 @@ TEST(Game, ScorePlayer2)
     EXPECT_EQ(game.getScorePlayer2(), 0);
 }
 
-TEST(Game, ScorePlayer2)
+TEST(Game, NumberOfPlayers)
 {
     Game game;
     EXPECT_EQ(game.getNumberOfPlayers(), 0);
+}
+
+TEST(Game, addPlayer)
+{
+    Game game;
+
+    EXPECT_TRUE(game.addPlayer(1));
+    EXPECT_TRUE(game.addPlayer(2));
+
+    EXPECT_EQ(game.getSocketPlayer1(), 1);
+    EXPECT_EQ(game.getSocketPlayer2(), 2);
+
+    EXPECT_FALSE(game.addPlayer(3));
 }

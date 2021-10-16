@@ -1,4 +1,5 @@
 #include "../P2/systemFunctions/systemFunctions.h"
+#include "../P2/gameManager/gameManager.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -37,6 +38,8 @@ int recibidos;
 char identificador[MSG_SIZE];
 
 int on, ret;
+
+GameManager *gameManager = GameManager::getInstance();
 
 int main()
 {
@@ -117,7 +120,34 @@ int main()
 
                         send(New_Server_Socket, buffer, sizeof(buffer), 0);
 
-                        /*
+                        if (gameManager->getNumberOfGames() == 0)
+                        {
+                           Game game;
+                           game.addPlayer(New_Server_Socket);
+                           gameManager->addGame(game);
+                        }
+
+                        else if (gameManager->getGames().back().getNumberOfPlayers() < 2)
+                        {
+                           gameManager->getGames().back().addPlayer(New_Server_Socket);
+                        }
+
+                        else if (gameManager->getNumberOfGames() < 10)
+                        {
+                           Game game;
+                           game.addPlayer(New_Server_Socket);
+                           gameManager->addGame(game);
+                        }
+
+                        else
+                        {
+                           strcpy(buffer, "+Ok. Petición Recibida. Quedamos a la espera de más jugadores\n");
+
+                           send(New_Server_Socket, buffer, sizeof(buffer), 0);
+                        }
+                     }
+
+                     /*
                         Esta parte informa a los clientes de que se ha conectado alguién
 
                         for (j = 0; j < (numClientes - 1); j++)
@@ -127,8 +157,8 @@ int main()
                            sprintf(buffer, "Nuevo Cliente conectado: %d\n", New_Server_Socket);
                            send(arrayClientes[j], buffer, sizeof(buffer), 0);
                         }
+                  }
                         */
-                     }
                      else
                      {
                         bzero(buffer, sizeof(buffer));
@@ -175,9 +205,7 @@ int main()
 
                         printf("%s\n", buffer);
 
-                        for (j = 0; j < numClientes; j++)
-                           if (arrayClientes[j] != i)
-                              send(arrayClientes[j], buffer, sizeof(buffer), 0);
+                        send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
                      }
                   }
                   //Si el cliente introdujo ctrl+c

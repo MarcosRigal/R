@@ -27,7 +27,10 @@ public:
     inline void setNumberOfGames(int numberOfGames) { numberOfGames_ = numberOfGames; }
 
     inline void addUser(User user) { users_.push_back(user); }
-    inline void addGame(Game game) { games_.push_back(game); }
+
+    bool addGame(Game game);
+
+    int findPair(int socketPlayer);
 };
 
 #endif

@@ -48,7 +48,5 @@ TEST(GameManager, numberOfGames)
 {
     GameManager *gameManager = GameManager::getInstance();
 
-    EXPECT_EQ(gameManager->getNumberOfGames(), 0);
-    gameManager->setNumberOfGames(1);
-    EXPECT_EQ(gameManager->getNumberOfGames(), 1);
+    EXPECT_EQ(gameManager->getNumberOfGames(), 2);
 }
