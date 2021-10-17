@@ -16,6 +16,17 @@ void clear()
 
 void saveSystem()
 {
+   FILE *f;
+   GameManager *gameManager = GameManager::getInstance();
+   f = fopen("/tmp/test.txt", "w");
+   char input[512];
+   for (int i = 0; i < (int)gameManager->getUsers().size(); i++)
+   {
+      snprintf(input, 512, "%s,%s", gameManager->getUsers()[i].getUserName(), gameManager->getUsers()[i].getUserPassword());
+      fputs(input, f);
+   }
+
+   fclose(f);
 }
 
 void loadSystem()
