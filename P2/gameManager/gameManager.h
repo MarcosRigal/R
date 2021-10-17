@@ -30,7 +30,7 @@ public:
 
     bool addGame(Game game);
 
-    bool matchUser(int socketPlayer);
+    int matchUser(int socketPlayer);
 
     int findPair(int socketPlayer);
 

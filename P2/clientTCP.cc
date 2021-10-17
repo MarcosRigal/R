@@ -95,8 +95,10 @@ int main()
             password = true;
          if (strncmp(buffer, "+Ok. Empieza la partida.", strlen("+Ok. Empieza la partida.")) == 0)
             playing = true;
-         if (strcmp(buffer, "+Ok. Petición Recibida. uedamos a la espera de más jugadores\n") == 0)
+         if (strcmp(buffer, "+Ok. Petición Recibida. quedamos a la espera de más jugadores\n") == 0)
             playing = true;
+         if (strcmp(buffer, "+Ok. Ha salido el otro jugador. Finaliza la partida\n") == 0)
+            playing = false;
       }
       else
       {

@@ -203,7 +203,7 @@ int main()
                         }
                         else
                         {
-                           strcpy(buffer, "--Err. Solicitud rechazada\n");
+                           strcpy(buffer, "--Err. Formato no válido\n");
                            send(i, buffer, sizeof(buffer), 0);
                         }
                      }
@@ -246,28 +246,24 @@ int main()
                            send(i, buffer, sizeof(buffer), 0);
                         }
                      }
-                     else if (strncmp(buffer, "INCIAR-PARTIDA2", strlen("INICIAR-PARTIDA2")) == 0)
-                     {
-                        strcpy(buffer, "-ERR. No puede iniciar una partida mientras juega o está en cola para jugar\n");
-                        send(i, buffer, sizeof(buffer), 0);
-                     }
-                     else if (strncmp(buffer, "INCIAR-PARTIDA3", strlen("INICIAR-PARTIDA3")) == 0)
-                     {
-                        strcpy(buffer, "-ERR. No puede iniciar una partida sin haber iniciado sesión\n");
-                        send(i, buffer, sizeof(buffer), 0);
-                     }
                      else if (strncmp(buffer, "INICIAR-PARTIDA", strlen("INICIAR-PARTIDA")) == 0)
                      {
-
-                        if (gameManager->matchUser(i))
+                        int status = gameManager->matchUser(i);
+                        if (status == 1)
                         {
                            strcpy(buffer, "+Ok. Empieza la partida. FRASE: _ _ _ _ _ _ _ _ _ _ _ _\n");
                            send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
                            send(i, buffer, sizeof(buffer), 0);
                         }
+                        else if (status == 0)
+                        {
+                           strcpy(buffer, "+Ok. Petición Recibida. quedamos a la espera de más jugadores\n");
+                           send(i, buffer, sizeof(buffer), 0);
+                        }
+
                         else
                         {
-                           strcpy(buffer, "+Ok. Petición Recibida. uedamos a la espera de más jugadores\n");
+                           strcpy(buffer, "-Err. Todas las salas están ocupadas vuelva a intentarlo más tarde\n");
                            send(i, buffer, sizeof(buffer), 0);
                         }
                      }

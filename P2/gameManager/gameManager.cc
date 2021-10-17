@@ -45,14 +45,14 @@ int GameManager::findPair(int socketPlayer)
     return -1;
 }
 
-bool GameManager::matchUser(int socketPlayer)
+int GameManager::matchUser(int socketPlayer)
 {
     if (numberOfGames_ == 0)
     {
         Game game;
         game.addPlayer(socketPlayer);
         addGame(game);
-        return false;
+        return 0;
     }
     if (numberOfGames_ > 0 && numberOfGames_ < 11)
     {
@@ -61,17 +61,17 @@ bool GameManager::matchUser(int socketPlayer)
         {
             games_.pop_back();
             games_.push_back(game);
-            return true;
+            return 1;
         }
         else
         {
             Game game;
             game.addPlayer(socketPlayer);
             addGame(game);
-            return false;
+            return 0;
         }
     }
-    return false;
+    return -1;
 }
 
 bool GameManager::nameExist(char *name)

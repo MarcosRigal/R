@@ -75,6 +75,6 @@ TEST(GameManager, checkPassword)
 {
     GameManager *gameManager = GameManager::getInstance();
 
-    EXPECT_TRUE(gameManager->checkPassword("1234"));
-    EXPECT_FALSE(gameManager->checkPassword("1235"));
+    EXPECT_TRUE(gameManager->checkPassword(3, "1234"));
+    EXPECT_TRUE(gameManager->checkPassword(-1, "1235"));
 }
