@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <arpa/inet.h>
+#include <regex.h>
 
 #define MSG_SIZE 350
 #define MAX_CLIENTS 30
@@ -38,10 +39,14 @@ char identificador[MSG_SIZE];
 
 int on, ret;
 
+regex_t regex;
+int result;
+
 GameManager *gameManager = GameManager::getInstance();
 
 int main()
 {
+   result = regcomp(&regex, "REGISTRO -u \\w* -p \\w*", REG_EXTENDED);
    loadSystem();
    /*
       Incializamos los sockets y preparamos el servidor para la lectura
@@ -164,13 +169,13 @@ int main()
 
                   if (recibidos > 0)
                   {
-
+                     result = regexec(&regex, buffer, 0, NULL, 0);
                      if (strcmp(buffer, "SALIR\n") == 0)
                      {
 
                         closedClient(i, &readfds, &numClientes, arrayClientes);
                      }
-                     else if (strncmp(buffer, "REGISTRO -u", strlen("REGISTRO -u")) == 0)
+                     else if (!result)
                      {
                         User user;
                         char *aux;
@@ -185,65 +190,74 @@ int main()
                         flag = aux;
                         aux = strtok(NULL, "\n");
                         password = aux;
-                        if (strcmp(flag, "-p") == 0)
+
+                        if (gameManager->nameExist(name))
                         {
-                           if (gameManager->nameExist(name))
-                           {
-                              strcpy(buffer, "–Err. Usuario ya registrado\n");
-                              send(i, buffer, sizeof(buffer), 0);
-                           }
-                           else
-                           {
-                              user.setUserName(name);
-                              user.setUserPassword(password);
-                              gameManager->addUser(user);
-                              strcpy(buffer, "+Ok. Usuario registrado\n");
-                              send(i, buffer, sizeof(buffer), 0);
-                           }
+                           strcpy(buffer, "–Err. Usuario ya registrado\n");
+                           send(i, buffer, sizeof(buffer), 0);
                         }
                         else
                         {
-                           strcpy(buffer, "--Err. Formato no válido\n");
+                           user.setUserName(name);
+                           user.setUserPassword(password);
+                           gameManager->addUser(user);
+                           strcpy(buffer, "+Ok. Usuario registrado\n");
                            send(i, buffer, sizeof(buffer), 0);
                         }
                      }
                      else if (strncmp(buffer, "USUARIO ", strlen("USUARIO ")) == 0)
                      {
-                        char *aux;
-                        aux = strtok(buffer, " ");
-                        aux = strtok(NULL, "\n");
-                        if (gameManager->nameExist(aux))
+                        if (strncmp(buffer, "USUARIO \n", strlen("USUARIO \n")) == 0)
                         {
-                           if (gameManager->logUser(i, aux))
-                           {
-                              strcpy(buffer, "+Ok. Usuario correcto\n");
-                           }
-                           else
-                           {
-                              strcpy(buffer, "-Err. No se ha podido completar el login\n");
-                           }
+                           strcpy(buffer, "-Err. No se ha podido completar el login\n");
                            send(i, buffer, sizeof(buffer), 0);
                         }
                         else
                         {
-                           strcpy(buffer, "–Err. Usuario incorrecto\n");
-                           send(i, buffer, sizeof(buffer), 0);
+                           char *aux;
+                           aux = strtok(buffer, " ");
+                           aux = strtok(NULL, "\n");
+                           if (gameManager->nameExist(aux))
+                           {
+                              if (gameManager->logUser(i, aux))
+                              {
+                                 strcpy(buffer, "+Ok. Usuario correcto\n");
+                              }
+                              else
+                              {
+                                 strcpy(buffer, "-Err. No se ha podido completar el login\n");
+                              }
+                              send(i, buffer, sizeof(buffer), 0);
+                           }
+                           else
+                           {
+                              strcpy(buffer, "–Err. Usuario incorrecto\n");
+                              send(i, buffer, sizeof(buffer), 0);
+                           }
                         }
                      }
                      else if (strncmp(buffer, "PASSWORD ", strlen("PASSWORD ")) == 0)
                      {
-                        char *aux;
-                        aux = strtok(buffer, " ");
-                        aux = strtok(NULL, "\n");
-                        if (gameManager->checkPassword(i, aux))
+                        if (strncmp(buffer, "PASSWORD \n", strlen("PASSWORD \n")) == 0)
                         {
-                           strcpy(buffer, "+Ok. Usuario validado\n");
+                           strcpy(buffer, "–ERR. Error en la validación\n");
                            send(i, buffer, sizeof(buffer), 0);
                         }
                         else
                         {
-                           strcpy(buffer, "–ERR. Error en la validación\n");
-                           send(i, buffer, sizeof(buffer), 0);
+                           char *aux;
+                           aux = strtok(buffer, " ");
+                           aux = strtok(NULL, "\n");
+                           if (gameManager->checkPassword(i, aux))
+                           {
+                              strcpy(buffer, "+Ok. Usuario validado\n");
+                              send(i, buffer, sizeof(buffer), 0);
+                           }
+                           else
+                           {
+                              strcpy(buffer, "–ERR. Error en la validación\n");
+                              send(i, buffer, sizeof(buffer), 0);
+                           }
                         }
                      }
                      else if (strncmp(buffer, "INICIAR-PARTIDA", strlen("INICIAR-PARTIDA")) == 0)
@@ -359,5 +373,6 @@ void exitHandler(int signum)
       FD_CLR(arrayClientes[j], &readfds);
    }
    close(Server_Socket);
+   regfree(&regex);
    exit(-1);
 }

@@ -54,7 +54,7 @@ int GameManager::matchUser(int socketPlayer)
         addGame(game);
         return 0;
     }
-    else if (numberOfGames_ > 0 && numberOfGames_ < 3)
+    else if (numberOfGames_ > 0 && numberOfGames_ < 11)
     {
         Game game = games_[numberOfGames_ - 1];
         if (game.addPlayer(socketPlayer))
@@ -63,7 +63,7 @@ int GameManager::matchUser(int socketPlayer)
             games_.push_back(game);
             return 1;
         }
-        else if (numberOfGames_ + 1 < 3)
+        else if (numberOfGames_ + 1 < 11)
         {
             Game game;
             game.addPlayer(socketPlayer);
