@@ -1,11 +1,11 @@
 #!/bin/bash
-#cd user
-#make
-#./test_user
-#cd ..
-#cd game
-#make
-#./test_game
+cd user
+make
+./test_user
+cd ..
+cd game
+make
+./test_game
 cd ..
 cd gameManager
 make
