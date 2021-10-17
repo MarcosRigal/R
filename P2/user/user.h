@@ -14,7 +14,11 @@ private:
     bool isWaiting_;
 
 public:
-    User() { isWaiting_ = true; }
+    User()
+    {
+        userSocket_ = -1;
+        isWaiting_ = true;
+    }
 
     inline int getUserSocket() { return userSocket_; }
 

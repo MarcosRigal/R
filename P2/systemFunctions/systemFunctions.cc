@@ -18,11 +18,11 @@ void saveSystem()
 {
    FILE *f;
    GameManager *gameManager = GameManager::getInstance();
-   f = fopen("/tmp/test.txt", "w");
+   f = fopen("users.txt", "w");
    char input[512];
    for (int i = 0; i < (int)gameManager->getUsers().size(); i++)
    {
-      snprintf(input, 512, "%s,%s", gameManager->getUsers()[i].getUserName(), gameManager->getUsers()[i].getUserPassword());
+      snprintf(input, 512, "%s,%s\n", gameManager->getUsers()[i].getUserName(), gameManager->getUsers()[i].getUserPassword());
       fputs(input, f);
    }
 

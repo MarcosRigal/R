@@ -21,7 +21,7 @@ TEST(GameManager, UsersVector)
 
     User user2;
     user2.setUserName("Salcedo");
-    user2.setUserPassword("1234");
+    user2.setUserPassword("1235");
     gameManager->addUser(user2);
 
     EXPECT_EQ(strcmp(gameManager->getUsers()[0].getUserName(), "Marcos"), 0);
@@ -54,4 +54,27 @@ TEST(GameManager, numberOfGames)
     GameManager *gameManager = GameManager::getInstance();
 
     EXPECT_EQ(gameManager->getNumberOfGames(), 2);
+}
+
+TEST(GameManager, nameExist)
+{
+    GameManager *gameManager = GameManager::getInstance();
+
+    EXPECT_TRUE(gameManager->nameExist("Marcos"));
+}
+
+TEST(GameManager, logUser)
+{
+    GameManager *gameManager = GameManager::getInstance();
+    gameManager->logUser(3, "Marcos");
+    EXPECT_EQ(gameManager->getUsers()[0].getUserSocket(), 3);
+    EXPECT_EQ(gameManager->getUsers()[1].getUserSocket(), -1);
+}
+
+TEST(GameManager, checkPassword)
+{
+    GameManager *gameManager = GameManager::getInstance();
+
+    EXPECT_TRUE(gameManager->checkPassword("1234"));
+    EXPECT_FALSE(gameManager->checkPassword("1235"));
 }

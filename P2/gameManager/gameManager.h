@@ -33,6 +33,19 @@ public:
     bool matchUser(int socketPlayer);
 
     int findPair(int socketPlayer);
+
+    bool nameExist(char *name);
+    bool nameExist(const char *name);
+
+    bool logUser(int userSocket, char *name);
+    bool logUser(int userSocket, const char *name);
+
+    bool unlogUser(int userSocket);
+
+    bool checkPassword(int userSocket, char *password);
+    bool checkPassword(int userSocket, const char *password);
+
+    bool deleteGame(int userSocket);
 };
 
 #endif

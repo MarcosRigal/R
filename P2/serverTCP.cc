@@ -119,20 +119,10 @@ int main()
                         strcpy(buffer, "+Ok. Usuario conectado\n");
 
                         send(New_Server_Socket, buffer, sizeof(buffer), 0);
-
-                        if (gameManager->matchUser(New_Server_Socket))
-                        {
-                           strcpy(buffer, "+Ok. Empieza la partida. FRASE: _ _ _ _ _ _ _ _ _ _ _ _\n");
-                           send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
-                        }
-                        else
-                        {
-                           strcpy(buffer, "+Ok. Petición Recibida.Quedamos a la espera de más jugadores\n");
-                        }
-                        send(New_Server_Socket, buffer, sizeof(buffer), 0);
                      }
 
                      /*
+
                         Esta parte informa a los clientes de que se ha conectado alguién
 
                         for (j = 0; j < (numClientes - 1); j++)
@@ -180,8 +170,125 @@ int main()
 
                         closedClient(i, &readfds, &numClientes, arrayClientes);
                      }
+                     else if (strncmp(buffer, "REGISTRO -u", strlen("REGISTRO -u")) == 0)
+                     {
+                        User user;
+                        char *aux;
+                        const char *name;
+                        const char *password;
+                        const char *flag;
+                        aux = strtok(buffer, " ");
+                        aux = strtok(NULL, " ");
+                        aux = strtok(NULL, " ");
+                        name = aux;
+                        aux = strtok(NULL, " ");
+                        flag = aux;
+                        aux = strtok(NULL, "\n");
+                        password = aux;
+                        if (strcmp(flag, "-p") == 0)
+                        {
+                           if (gameManager->nameExist(name))
+                           {
+                              strcpy(buffer, "–Err. Usuario ya registrado\n");
+                              send(i, buffer, sizeof(buffer), 0);
+                           }
+                           else
+                           {
+                              user.setUserName(name);
+                              user.setUserPassword(password);
+                              gameManager->addUser(user);
+                              strcpy(buffer, "+Ok. Usuario registrado\n");
+                              send(i, buffer, sizeof(buffer), 0);
+                           }
+                        }
+                        else
+                        {
+                           strcpy(buffer, "--Err. Solicitud rechazada\n");
+                           send(i, buffer, sizeof(buffer), 0);
+                        }
+                     }
+                     else if (strncmp(buffer, "USUARIO ", strlen("USUARIO ")) == 0)
+                     {
+                        char *aux;
+                        aux = strtok(buffer, " ");
+                        aux = strtok(NULL, "\n");
+                        if (gameManager->nameExist(aux))
+                        {
+                           if (gameManager->logUser(i, aux))
+                           {
+                              strcpy(buffer, "+Ok. Usuario correcto\n");
+                           }
+                           else
+                           {
+                              strcpy(buffer, "-Err. No se ha podido completar el login\n");
+                           }
+                           send(i, buffer, sizeof(buffer), 0);
+                        }
+                        else
+                        {
+                           strcpy(buffer, "–Err. Usuario incorrecto\n");
+                           send(i, buffer, sizeof(buffer), 0);
+                        }
+                     }
+                     else if (strncmp(buffer, "PASSWORD ", strlen("PASSWORD ")) == 0)
+                     {
+                        char *aux;
+                        aux = strtok(buffer, " ");
+                        aux = strtok(NULL, "\n");
+                        if (gameManager->checkPassword(i, aux))
+                        {
+                           strcpy(buffer, "+Ok. Usuario validado\n");
+                           send(i, buffer, sizeof(buffer), 0);
+                        }
+                        else
+                        {
+                           strcpy(buffer, "–ERR. Error en la validación\n");
+                           send(i, buffer, sizeof(buffer), 0);
+                        }
+                     }
+                     else if (strncmp(buffer, "INCIAR-PARTIDA2", strlen("INICIAR-PARTIDA2")) == 0)
+                     {
+                        strcpy(buffer, "-ERR. No puede iniciar una partida mientras juega o está en cola para jugar\n");
+                        send(i, buffer, sizeof(buffer), 0);
+                     }
+                     else if (strncmp(buffer, "INCIAR-PARTIDA3", strlen("INICIAR-PARTIDA3")) == 0)
+                     {
+                        strcpy(buffer, "-ERR. No puede iniciar una partida sin haber iniciado sesión\n");
+                        send(i, buffer, sizeof(buffer), 0);
+                     }
+                     else if (strncmp(buffer, "INICIAR-PARTIDA", strlen("INICIAR-PARTIDA")) == 0)
+                     {
+
+                        if (gameManager->matchUser(i))
+                        {
+                           strcpy(buffer, "+Ok. Empieza la partida. FRASE: _ _ _ _ _ _ _ _ _ _ _ _\n");
+                           send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                           send(i, buffer, sizeof(buffer), 0);
+                        }
+                        else
+                        {
+                           strcpy(buffer, "+Ok. Petición Recibida.Quedamos a la espera de más jugadores\n");
+                           send(i, buffer, sizeof(buffer), 0);
+                        }
+                     }
+                     else if (strncmp(buffer, "SALIR", strlen("SALIR")) == 0)
+                     {
+                        closedClient(i, &readfds, &numClientes, arrayClientes);
+                     }
+
+                     else if (strncmp(buffer, "CHAT ", strlen("CHAT ")) == 0)
+                     {
+                        printf("%d\n", gameManager->findPair(i));
+                        send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                     }
+
                      else
                      {
+                        strcpy(buffer, "--Err. Solicitud rechazada\n");
+                        send(i, buffer, sizeof(buffer), 0);
+                     }
+
+                     /*
                         //Esta parte envía el mensaje al otro
                         snprintf(identificador, (sizeof(buffer) + 6), "<%d>: %s", i, buffer);
                         bzero(buffer, sizeof(buffer));
@@ -191,12 +298,12 @@ int main()
                         printf("%s to %d\n", buffer, gameManager->findPair(i));
 
                         send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
-                     }
+                     
+                     */
                   }
                   //Si el cliente introdujo ctrl+c
                   if (recibidos == 0)
                   {
-                     printf("El socket %d, ha introducido ctrl+c\n", i);
                      //Eliminar ese socket
                      closedClient(i, &readfds, &numClientes, arrayClientes);
                   }
@@ -212,9 +319,11 @@ int main()
 
 void closedClient(int socket, fd_set *readfds, int *numClientes, int arrayClientes[])
 {
-
+   printf("El socket %d, se ha desconectado\n", i);
    char buffer[250];
    int j;
+   strcpy(buffer, "+Ok. Ha salido el otro jugador. Finaliza la partida\n");
+   send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
 
    close(socket);
    FD_CLR(socket, readfds);
@@ -227,6 +336,8 @@ void closedClient(int socket, fd_set *readfds, int *numClientes, int arrayClient
       (arrayClientes[j] = arrayClientes[j + 1]);
 
    (*numClientes)--;
+   gameManager->unlogUser(i);
+   gameManager->deleteGame(i);
    /*
    Informa al resto de clientes de que alguien se ha desconectado
    bzero(buffer, sizeof(buffer));
