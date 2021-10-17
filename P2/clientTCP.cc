@@ -13,6 +13,10 @@ using namespace std;
 #include <time.h>
 #include <arpa/inet.h>
 
+bool user = false;
+bool password = false;
+bool playing = false;
+
 int main()
 {
 
@@ -78,13 +82,21 @@ int main()
          bzero(buffer, sizeof(buffer));
          recv(sd, buffer, sizeof(buffer), 0);
 
-         printf("\n%s\n", buffer);
+         printf("%s", buffer);
 
          if (strcmp(buffer, "–ERR. Demasiados clientes conectados\n") == 0)
             fin = 1;
 
          if (strcmp(buffer, "–ERR. Desconectado por el servidor\n") == 0)
             fin = 1;
+         if (strcmp(buffer, "+Ok. Usuario correcto\n") == 0)
+            user = true;
+         if (strcmp(buffer, "+Ok. Usuario validado\n") == 0)
+            password = true;
+         if (strncmp(buffer, "+Ok. Empieza la partida.", strlen("+Ok. Empieza la partida.")) == 0)
+            playing = true;
+         if (strcmp(buffer, "+Ok. Petición Recibida. uedamos a la espera de más jugadores\n") == 0)
+            playing = true;
       }
       else
       {
@@ -100,8 +112,38 @@ int main()
             {
                fin = 1;
             }
-
-            send(sd, buffer, sizeof(buffer), 0);
+            else if ((strncmp(buffer, "PASSWORD", strlen("PASSWORD")) == 0) && (user == false))
+            {
+               printf("-Err. No puede introducir la contraseña antes que el nombre de usuario\n");
+            }
+            else if ((strncmp(buffer, "REGISTRO", strlen("REGISTRO")) == 0) && (user == true))
+            {
+               printf("-Err. Ya ha iniciado sesión\n");
+            }
+            else if ((strcmp(buffer, "INICIAR-PARTIDA\n") == 0) && (password == false))
+            {
+               printf("-Err. No puede iniciar partida antes de iniciar sesión\n");
+            }
+            else if ((strncmp(buffer, "CONSONANTE", strlen("CONSONANTE")) == 0) && (playing == false))
+            {
+               printf("-Err. Debe estar en una partida para hacer eso\n");
+            }
+            else if ((strncmp(buffer, "VOCAL", strlen("VOCAL")) == 0) && (playing == false))
+            {
+               printf("-Err. Debe estar en una partida para hacer eso\n");
+            }
+            else if ((strncmp(buffer, "RESOLVER", strlen("RESOLVER")) == 0) && (playing == false))
+            {
+               printf("-Err. Debe estar en una partida para hacer eso\n");
+            }
+            else if ((strncmp(buffer, "PUNTUACION", strlen("PUNTUACION")) == 0) && (playing == false))
+            {
+               printf("-Err. Debe estar en una partida para hacer eso\n");
+            }
+            else
+            {
+               send(sd, buffer, sizeof(buffer), 0);
+            }
          }
       }
 

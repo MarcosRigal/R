@@ -267,7 +267,7 @@ int main()
                         }
                         else
                         {
-                           strcpy(buffer, "+Ok. Petición Recibida.Quedamos a la espera de más jugadores\n");
+                           strcpy(buffer, "+Ok. Petición Recibida. uedamos a la espera de más jugadores\n");
                            send(i, buffer, sizeof(buffer), 0);
                         }
                      }
