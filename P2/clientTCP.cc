@@ -122,9 +122,17 @@ int main()
             {
                printf("-Err. Ya ha iniciado sesión\n");
             }
+            else if ((strncmp(buffer, "USUARIO ", strlen("USUARIO ")) == 0) && (user == true))
+            {
+               printf("-Err. Ya ha iniciado sesión\n");
+            }
             else if ((strcmp(buffer, "INICIAR-PARTIDA\n") == 0) && (password == false))
             {
                printf("-Err. No puede iniciar partida antes de iniciar sesión\n");
+            }
+            else if ((strcmp(buffer, "INICIAR-PARTIDA\n") == 0) && (playing == true))
+            {
+               printf("-Err. No puede volver a iniciar partida\n");
             }
             else if ((strncmp(buffer, "CONSONANTE", strlen("CONSONANTE")) == 0) && (playing == false))
             {

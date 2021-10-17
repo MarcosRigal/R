@@ -54,7 +54,7 @@ int GameManager::matchUser(int socketPlayer)
         addGame(game);
         return 0;
     }
-    if (numberOfGames_ > 0 && numberOfGames_ < 11)
+    else if (numberOfGames_ > 0 && numberOfGames_ < 3)
     {
         Game game = games_[numberOfGames_ - 1];
         if (game.addPlayer(socketPlayer))
@@ -63,7 +63,7 @@ int GameManager::matchUser(int socketPlayer)
             games_.push_back(game);
             return 1;
         }
-        else
+        else if (numberOfGames_ + 1 < 3)
         {
             Game game;
             game.addPlayer(socketPlayer);
@@ -78,7 +78,7 @@ bool GameManager::nameExist(char *name)
 {
     for (int i = 0; i < (int)users_.size(); i++)
     {
-        if (strtok(users_[i].getUserName(), name) == 0)
+        if (strcmp(users_[i].getUserName(), name) == 0)
         {
             return true;
         }
@@ -90,7 +90,7 @@ bool GameManager::nameExist(const char *name)
 {
     for (int i = 0; i < (int)users_.size(); i++)
     {
-        if (strtok(users_[i].getUserName(), name) == 0)
+        if (strcmp(users_[i].getUserName(), name) == 0)
         {
             return true;
         }
@@ -102,7 +102,7 @@ bool GameManager::logUser(int userSocket, char *name)
 {
     for (int i = 0; i < (int)users_.size(); i++)
     {
-        if ((strtok(users_[i].getUserName(), name) == 0) && (users_[i].getUserSocket() == -1))
+        if ((strcmp(users_[i].getUserName(), name) == 0) && (users_[i].getUserSocket() == -1))
         {
             users_[i].setUserSocket(userSocket);
             return true;
@@ -115,7 +115,7 @@ bool GameManager::logUser(int userSocket, const char *name)
 {
     for (int i = 0; i < (int)users_.size(); i++)
     {
-        if ((strtok(users_[i].getUserName(), name) == 0) && (users_[i].getUserSocket() == -1))
+        if ((strcmp(users_[i].getUserName(), name) == 0) && (users_[i].getUserSocket() == -1))
         {
             users_[i].setUserSocket(userSocket);
             return true;
@@ -141,7 +141,7 @@ bool GameManager::checkPassword(int userSocket, char *password)
 {
     for (int i = 0; i < (int)users_.size(); i++)
     {
-        if ((strtok(users_[i].getUserPassword(), password) == 0) && (users_[i].getUserSocket() == userSocket))
+        if ((strcmp(users_[i].getUserPassword(), password) == 0) && (users_[i].getUserSocket() == userSocket))
         {
             return true;
         }
@@ -153,7 +153,7 @@ bool GameManager::checkPassword(int userSocket, const char *password)
 {
     for (int i = 0; i < (int)users_.size(); i++)
     {
-        if ((strtok(users_[i].getUserPassword(), password) == 0) && (users_[i].getUserSocket() == userSocket))
+        if ((strcmp(users_[i].getUserPassword(), password) == 0) && (users_[i].getUserSocket() == userSocket))
         {
             return true;
         }
@@ -169,11 +169,13 @@ bool GameManager::deleteGame(int userSocket)
             if (it->getSocketPlayer1() == userSocket)
             {
                 games_.erase(it);
+                numberOfGames_--;
                 return true;
             }
             else if (it->getSocketPlayer2() == userSocket)
             {
                 games_.erase(it);
+                numberOfGames_--;
                 return true;
             }
         }

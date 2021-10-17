@@ -347,6 +347,7 @@ void closedClient(int socket, fd_set *readfds, int *numClientes, int arrayClient
 
 void exitHandler(int signum)
 {
+   saveSystem();
    printf("\nApagando el servidor...\n");
    signal(SIGINT, exitHandler);
    for (j = 0; j < numClientes; j++)
@@ -358,6 +359,5 @@ void exitHandler(int signum)
       FD_CLR(arrayClientes[j], &readfds);
    }
    close(Server_Socket);
-   saveSystem();
    exit(-1);
 }
