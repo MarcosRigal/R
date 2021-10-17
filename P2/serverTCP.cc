@@ -43,6 +43,7 @@ GameManager *gameManager = GameManager::getInstance();
 
 int main()
 {
+   loadSystem();
    /*
       Incializamos los sockets y preparamos el servidor para la lectura
    */
@@ -120,31 +121,16 @@ int main()
 
                         send(New_Server_Socket, buffer, sizeof(buffer), 0);
 
-                        if (gameManager->getNumberOfGames() == 0)
+                        if (gameManager->matchUser(New_Server_Socket))
                         {
-                           Game game;
-                           game.addPlayer(New_Server_Socket);
-                           gameManager->addGame(game);
+                           strcpy(buffer, "+Ok. Empieza la partida. FRASE: _ _ _ _ _ _ _ _ _ _ _ _\n");
+                           send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
                         }
-
-                        else if (gameManager->getGames().back().getNumberOfPlayers() < 2)
-                        {
-                           gameManager->getGames().back().addPlayer(New_Server_Socket);
-                        }
-
-                        else if (gameManager->getNumberOfGames() < 10)
-                        {
-                           Game game;
-                           game.addPlayer(New_Server_Socket);
-                           gameManager->addGame(game);
-                        }
-
                         else
                         {
-                           strcpy(buffer, "+Ok. Petición Recibida. Quedamos a la espera de más jugadores\n");
-
-                           send(New_Server_Socket, buffer, sizeof(buffer), 0);
+                           strcpy(buffer, "+Ok. Petición Recibida.Quedamos a la espera de más jugadores\n");
                         }
+                        send(New_Server_Socket, buffer, sizeof(buffer), 0);
                      }
 
                      /*
@@ -157,7 +143,7 @@ int main()
                            sprintf(buffer, "Nuevo Cliente conectado: %d\n", New_Server_Socket);
                            send(arrayClientes[j], buffer, sizeof(buffer), 0);
                         }
-                  }
+                  
                         */
                      else
                      {
@@ -203,7 +189,7 @@ int main()
 
                         strcpy(buffer, identificador);
 
-                        printf("%s\n", buffer);
+                        printf("%s to %d\n", buffer, gameManager->findPair(i));
 
                         send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
                      }
@@ -266,5 +252,6 @@ void exitHandler(int signum)
       FD_CLR(arrayClientes[j], &readfds);
    }
    close(Server_Socket);
+   saveSystem();
    exit(-1);
 }

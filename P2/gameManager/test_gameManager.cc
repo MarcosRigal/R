@@ -32,16 +32,21 @@ TEST(GameManager, GamesVector)
 {
     GameManager *gameManager = GameManager::getInstance();
 
-    Game game1;
-    game1.setSocketPlayer1(1);
-    gameManager->addGame(game1);
-
-    Game game2;
-    game2.setSocketPlayer2(2);
-    gameManager->addGame(game2);
+    gameManager->matchUser(1);
+    gameManager->matchUser(2);
+    gameManager->matchUser(3);
+    gameManager->matchUser(4);
 
     EXPECT_EQ(gameManager->getGames()[0].getSocketPlayer1(), 1);
-    EXPECT_EQ(gameManager->getGames()[1].getSocketPlayer2(), 2);
+    EXPECT_EQ(gameManager->getGames()[0].getSocketPlayer2(), 2);
+    EXPECT_EQ(gameManager->getGames()[1].getSocketPlayer1(), 3);
+    EXPECT_EQ(gameManager->getGames()[1].getSocketPlayer2(), 4);
+
+    EXPECT_EQ(gameManager->findPair(1), 2);
+    EXPECT_EQ(gameManager->findPair(2), 1);
+
+    EXPECT_EQ(gameManager->findPair(3), 4);
+    EXPECT_EQ(gameManager->findPair(4), 3);
 }
 
 TEST(GameManager, numberOfGames)

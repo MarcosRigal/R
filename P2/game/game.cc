@@ -1,4 +1,5 @@
 #include "game.h"
+using namespace std;
 
 bool Game::addPlayer(int socketPlayer)
 {
@@ -16,5 +17,3 @@ bool Game::addPlayer(int socketPlayer)
     }
     return false;
 }
-
-using namespace std;
