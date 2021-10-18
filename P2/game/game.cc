@@ -17,3 +17,16 @@ bool Game::addPlayer(int socketPlayer)
     }
     return false;
 }
+
+int Game::getScore(int socketPlayer)
+{
+    if (socketPlayer1_ == socketPlayer)
+    {
+        return scorePlayer1_;
+    }
+    if (socketPlayer2_ == socketPlayer)
+    {
+        return scorePlayer2_;
+    }
+    return -1;
+}

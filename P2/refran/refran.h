@@ -22,6 +22,7 @@ public:
     inline void setRefranOculto(char *refranOculto) { strncpy(refranOculto_, refranOculto, 250); }
 
     void getRandomRefran();
+
     void hideRefran(const char *refran);
 
     bool solveRefran(const char *refran);

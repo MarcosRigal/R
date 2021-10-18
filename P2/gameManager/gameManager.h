@@ -49,6 +49,10 @@ public:
     bool deleteGame(int userSocket);
 
     int getScore(int userSocket);
+
+    Game getGame(int userSocket);
+
+    char *getName(int userSocket);
 };
 
 #endif

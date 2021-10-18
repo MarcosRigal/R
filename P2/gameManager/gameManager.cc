@@ -202,3 +202,35 @@ int GameManager::getScore(int userSocket)
 
     return -1;
 }
+
+Game GameManager::getGame(int userSocket)
+{
+    for (int i = 0; i < (int)games_.size(); i++)
+    {
+        if (games_[i].getNumberOfPlayers() == 2)
+        {
+            if (games_[i].getSocketPlayer1() == userSocket)
+            {
+                return games_[i];
+            }
+            else if (games_[i].getSocketPlayer2() == userSocket)
+            {
+                return games_[i];
+            }
+        }
+    }
+    Game fakeGame;
+    return fakeGame;
+}
+
+char *GameManager::getName(int userSocket)
+{
+    for (int i = 0; i < (int)users_.size(); i++)
+    {
+        if (users_[i].getUserSocket() == userSocket)
+        {
+            return users_[i].getUserName();
+        }
+    }
+    return nullptr;
+}

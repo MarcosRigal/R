@@ -128,6 +128,15 @@ int main(int argc, char const *argv[])
             playing = false;
          if (strcmp(buffer, "+Ok. Desconexión procesada.\n") == 0)
             fin = 1;
+         if (strcmp(buffer, "+Ok. Turno del otro jugador\n") == 0)
+            myTurn = false;
+         if (strcmp(buffer, "+Ok. Turno de partida\n") == 0)
+            myTurn = true;
+         if (strncmp(buffer, "+Ok. Partida finalizada.", strlen("+Ok. Partida finalizada.")) == 0)
+         {
+            playing = false;
+            myTurn = false;
+         }
       }
       else
       {
@@ -221,7 +230,6 @@ int main(int argc, char const *argv[])
             else
             {
                send(sd, buffer, sizeof(buffer), 0);
-               //CAMBIAR MYTURN AL ENVIAR
             }
          }
       }

@@ -16,7 +16,7 @@ private:
 
     int numberOfPlayers_;
 
-    Refran refran;
+    Refran refran_;
 
 public:
     Game()
@@ -29,10 +29,14 @@ public:
     inline int getSocketPlayer1() { return socketPlayer1_; }
     inline int getSocketPlayer2() { return socketPlayer2_; }
 
+    int getScore(int sockerPlayer);
+
     inline int getScorePlayer1() { return scorePlayer1_; }
     inline int getScorePlayer2() { return scorePlayer2_; }
 
     inline int getNumberOfPlayers() { return numberOfPlayers_; }
+
+    inline Refran getRefran() { return refran_; }
 
     inline void setSocketPlayer1(int socketPlayer1) { socketPlayer1_ = socketPlayer1; }
     inline void setSocketPlayer2(int socketPlayer2) { socketPlayer2_ = socketPlayer2; }
@@ -41,6 +45,8 @@ public:
     inline void setScorePlayer2(int scorePlayer2) { scorePlayer2_ = scorePlayer2; }
 
     inline void setNumberOfPlayers(int numberOfPlayers) { numberOfPlayers_ = numberOfPlayers; }
+
+    inline void setRefran(Refran refran) { refran_ = refran; }
 
     bool addPlayer(int socketPlayer);
 };
