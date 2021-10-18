@@ -234,3 +234,40 @@ char *GameManager::getName(int userSocket)
     }
     return nullptr;
 }
+
+int GameManager::findOcurrences(int userSocket, const char letter)
+{
+    for (int i = 0; i < (int)games_.size(); i++)
+    {
+        if (games_[i].getNumberOfPlayers() == 2)
+        {
+            if (games_[i].getSocketPlayer1() == userSocket)
+            {
+                return games_[i].findOcurrences(letter);
+            }
+            else if (games_[i].getSocketPlayer2() == userSocket)
+            {
+                return games_[i].findOcurrences(letter);
+            }
+        }
+    }
+    return -1;
+}
+
+void GameManager::addPlayerScore(int userSocket, int multiplier)
+{
+    for (int i = 0; i < (int)games_.size(); i++)
+    {
+        if (games_[i].getNumberOfPlayers() == 2)
+        {
+            if (games_[i].getSocketPlayer1() == userSocket)
+            {
+                return games_[i].setScorePlayer1(50 * multiplier);
+            }
+            else if (games_[i].getSocketPlayer2() == userSocket)
+            {
+                games_[i].setScorePlayer2(50 * multiplier);
+            }
+        }
+    }
+}

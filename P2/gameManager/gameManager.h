@@ -53,6 +53,10 @@ public:
     Game getGame(int userSocket);
 
     char *getName(int userSocket);
+
+    int findOcurrences(int userSocket, const char letter);
+
+    void addPlayerScore(int userSocket, int multiplier);
 };
 
 #endif

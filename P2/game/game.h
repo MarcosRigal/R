@@ -49,6 +49,7 @@ public:
     inline void setRefran(Refran refran) { refran_ = refran; }
 
     bool addPlayer(int socketPlayer);
+    inline int findOcurrences(const char letter) { return refran_.findOcurrences(letter); }
 };
 
 #endif

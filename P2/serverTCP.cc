@@ -278,7 +278,7 @@ int main()
                      else if (strncmp(buffer, "CONSONANTE ", strlen("CONSONANTE ")) == 0)
                      {
                         const char c = buffer[11];
-                        int ocurrences = gameManager->getGame(i).getRefran().findOcurrences(c);
+                        int ocurrences = gameManager->findOcurrences(i, c);
                         if (ocurrences == 0)
                         {
                            sprintf(buffer, "+Ok. %c aparece %d veces. FRASE: %s\n", c, ocurrences, gameManager->getGame(i).getRefran().getRefranOculto());
@@ -287,10 +287,12 @@ int main()
                            send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
                            sprintf(buffer, "+Ok. Turno del otro jugador\n");
                            send(i, buffer, sizeof(buffer), 0);
+                           send(i, buffer, sizeof(buffer), 0);
                         }
                         else
                         {
                            printf("%s\n", gameManager->getGame(i).getRefran().getRefranOculto());
+                           gameManager->addPlayerScore(i, ocurrences);
                            sprintf(buffer, "+Ok. %c aparece %d veces. FRASE: %s\n", c, ocurrences, gameManager->getGame(i).getRefran().getRefranOculto());
                            send(i, buffer, sizeof(buffer), 0);
                         }
@@ -305,6 +307,7 @@ int main()
                            sprintf(buffer, "+Ok. Partida finalizada. FRASE: %s. No se ha acertado la frase.\n", gameManager->getGame(i).getRefran().getRefran());
                            send(i, buffer, sizeof(buffer), 0);
                            send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                           gameManager->deleteGame(i);
                         }
                         else
                         {
@@ -316,12 +319,14 @@ int main()
                               sprintf(buffer, "+Ok. Partida finalizada. FRASE: %s. Ha ganado el jugador %s con %d puntos\n", gameManager->getGame(i).getRefran().getRefran(), gameManager->getName(i), gameManager->getGame(i).getScore(i));
                               send(i, buffer, sizeof(buffer), 0);
                               send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                              gameManager->deleteGame(i);
                            }
                            else
                            {
                               sprintf(buffer, "+Ok. Partida finalizada. FRASE: %s. No se ha acertado la frase.\n", gameManager->getGame(i).getRefran().getRefran());
                               send(i, buffer, sizeof(buffer), 0);
                               send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                              gameManager->deleteGame(i);
                            }
                         }
                      }
