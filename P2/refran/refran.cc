@@ -60,11 +60,17 @@ bool Refran::solveRefran(const char *refran)
     char copyRefran[250];
     strcpy(copyRefran, refran);
     strtok(copyRefran, "\n");
-    if (strcmp(copyRefran, getRefran()) == 0)
+    int i = 0;
+    while (refran_[i] != '.')
     {
-        return true;
+        if (toupper(refran_[i]) != toupper(copyRefran[i]))
+        {
+            return false;
+        }
+
+        i++;
     }
-    return false;
+    return true;
 }
 
 int Refran::findOcurrences(const char letter)
