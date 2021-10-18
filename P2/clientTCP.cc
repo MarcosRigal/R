@@ -82,6 +82,12 @@ int main(int argc, char const *argv[])
    /* ------------------------------------------------------------------
 		Se transmite la información
 	-------------------------------------------------------------------*/
+   printf("Bienvenido a la ruleta de la suerte.\n");
+   printf("Una vez se haya conectado al servidor introduzca:\n");
+   printf(" - Para registrarse en la aplicación por primera vez: \n");
+   printf("   REGISTRO -u suNombre -p suContraseña\n");
+   printf(" - Para iniciar sesión: \n");
+   printf("   USUARIO suNombre\n");
    do
    {
       auxfds = readfds;
@@ -102,14 +108,37 @@ int main(int argc, char const *argv[])
          if (strcmp(buffer, "–ERR. Desconectado por el servidor\n") == 0)
             fin = 1;
          if (strcmp(buffer, "+Ok. Usuario correcto\n") == 0)
+         {
             user = true;
+            printf("Introduzca ahora su contraseña así:\n");
+            printf("   PASSWORD suContraseña\n");
+         }
          if (strcmp(buffer, "+Ok. Usuario validado\n") == 0)
+         {
             password = true;
+            clear();
+            printf("%s", buffer);
+            printf("Para emepzar a jugar introduzca:\n");
+            printf("   INICIAR-PARTIDA\n");
+            printf("Para salir introduzca:\n");
+            printf("   SALIR\n");
+         }
          if (strncmp(buffer, "+Ok. Empieza la partida.", strlen("+Ok. Empieza la partida.")) == 0)
          {
             playing = true;
             clear();
             printf("%s", buffer);
+            printf("En su turno podrá:\n");
+            printf(" - Para mandar una consonante introduzca:\n");
+            printf("   CONSONANTE c\n");
+            printf(" - Para mandar una vocal introduzca:\n");
+            printf("   VOCAL c\n");
+            printf(" - Para consultar su puntuación introduzca:\n");
+            printf("   PUNTUACION\n");
+            printf(" - Para resolver el panel introduzca:\n");
+            printf("   RESOLVER solución\n");
+            printf(" - Para salir de la partida introduzca:\n");
+            printf("   SALIR\n");
             if (myTurn == true)
             {
                printf("+Ok. Turno de partida\n");
@@ -259,7 +288,6 @@ int main(int argc, char const *argv[])
             }
          }
       }
-
    } while (fin == 0);
 
    close(sd);

@@ -266,7 +266,7 @@ void GameManager::addPlayerScore(int userSocket, int multiplier)
             }
             else if (games_[i].getSocketPlayer2() == userSocket)
             {
-                games_[i].setScorePlayer2(games_[i].getScorePlayer1() + (50 * multiplier));
+                games_[i].setScorePlayer2(games_[i].getScorePlayer2() + (50 * multiplier));
             }
         }
     }
@@ -284,7 +284,7 @@ void GameManager::comprarVocal(int userSocket)
             }
             else if (games_[i].getSocketPlayer2() == userSocket)
             {
-                games_[i].setScorePlayer2(games_[i].getScorePlayer1() - 50);
+                games_[i].setScorePlayer2(games_[i].getScorePlayer2() - 50);
             }
         }
     }
