@@ -11,6 +11,7 @@
 #include <time.h>
 #include <arpa/inet.h>
 #include <regex.h>
+#include <ctype.h>
 
 #define MSG_SIZE 350
 #define MAX_CLIENTS 30
@@ -278,27 +279,93 @@ int main()
                      else if (strncmp(buffer, "CONSONANTE ", strlen("CONSONANTE ")) == 0)
                      {
                         const char c = buffer[11];
-                        int ocurrences = gameManager->findOcurrences(i, c);
-                        if (ocurrences == 0)
+                        if (toupper(c) == toupper('a') || toupper(c) == toupper('e') || toupper(c) == toupper('i') || toupper(c) == toupper('o') || toupper(c) == toupper('u') || c == '\0' || c == ' ' || c == '.' || c == ',' || c == ';' || c == '¡' || c == '!' || c == '¿' || c == '?' || c == ':')
                         {
-                           sprintf(buffer, "+Ok. %c aparece %d veces. FRASE: %s\n", c, ocurrences, gameManager->getGame(i).getRefran().getRefranOculto());
+                           sprintf(buffer, "-Err. %c no es una consonante\n", c);
                            send(i, buffer, sizeof(buffer), 0);
-                           sprintf(buffer, "+Ok. Turno de partida\n");
-                           send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
-                           sprintf(buffer, "+Ok. Turno del otro jugador\n");
+                        }
+                        else
+                        {
+                           int ocurrences = gameManager->findOcurrences(i, c);
+                           if (ocurrences == 0)
+                           {
+                              sprintf(buffer, "+Ok. %c aparece %d veces. FRASE: %s\n", c, ocurrences, gameManager->getGame(i).getRefran().getRefranOculto());
+                              send(i, buffer, sizeof(buffer), 0);
+                              send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                              sprintf(buffer, "+Ok. Turno de partida\n");
+                              send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                              sprintf(buffer, "+Ok. Turno del otro jugador\n");
+                              send(i, buffer, sizeof(buffer), 0);
+                           }
+                           else
+                           {
+                              gameManager->addPlayerScore(i, ocurrences);
+                              if (gameManager->getGame(i).getRefran().solveRefran(gameManager->getGame(i).getRefran().getRefranOculto()))
+                              {
+                                 sprintf(buffer, "+Ok. Partida finalizada. FRASE: %s. Ha ganado el jugador %s con %d puntos\n", gameManager->getGame(i).getRefran().getRefran(), gameManager->getName(i), gameManager->getGame(i).getScore(i));
+                                 send(i, buffer, sizeof(buffer), 0);
+                                 send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                                 gameManager->deleteGame(i);
+                              }
+                              else
+                              {
+                                 sprintf(buffer, "+Ok. %c aparece %d veces. FRASE: %s\n", c, ocurrences, gameManager->getGame(i).getRefran().getRefranOculto());
+                                 send(i, buffer, sizeof(buffer), 0);
+                                 send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                              }
+                           }
+                        }
+                     }
+                     else if (strncmp(buffer, "VOCAL ", strlen("VOCAL ")) == 0)
+                     {
+                        const char c = buffer[6];
+                        if (toupper(c) != toupper('a') && toupper(c) != toupper('e') && toupper(c) != toupper('i') && toupper(c) != toupper('o') && toupper(c) != toupper('u'))
+                        {
+                           sprintf(buffer, "-Err. %c no es una vocal\n", c);
                            send(i, buffer, sizeof(buffer), 0);
                            send(i, buffer, sizeof(buffer), 0);
                         }
                         else
                         {
-                           printf("%s\n", gameManager->getGame(i).getRefran().getRefranOculto());
-                           gameManager->addPlayerScore(i, ocurrences);
-                           sprintf(buffer, "+Ok. %c aparece %d veces. FRASE: %s\n", c, ocurrences, gameManager->getGame(i).getRefran().getRefranOculto());
-                           send(i, buffer, sizeof(buffer), 0);
+                           if (gameManager->getScore(i) < 50)
+                           {
+                              strcpy(buffer, "+OK. No tienes puntuación suficiente\n");
+                              send(i, buffer, sizeof(buffer), 0);
+                              send(i, buffer, sizeof(buffer), 0);
+                           }
+                           else
+                           {
+                              gameManager->comprarVocal(i);
+                              int ocurrences = gameManager->findOcurrences(i, c);
+                              if (ocurrences == 0)
+                              {
+                                 sprintf(buffer, "+Ok. %c aparece %d veces. FRASE: %s\n", c, ocurrences, gameManager->getGame(i).getRefran().getRefranOculto());
+                                 send(i, buffer, sizeof(buffer), 0);
+                                 send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                                 sprintf(buffer, "+Ok. Turno de partida\n");
+                                 send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                                 sprintf(buffer, "+Ok. Turno del otro jugador\n");
+                                 send(i, buffer, sizeof(buffer), 0);
+                                 send(i, buffer, sizeof(buffer), 0);
+                              }
+                              else
+                              {
+                                 if (gameManager->getGame(i).getRefran().solveRefran(gameManager->getGame(i).getRefran().getRefranOculto()))
+                                 {
+                                    sprintf(buffer, "+Ok. Partida finalizada. FRASE: %s. Ha ganado el jugador %s con %d puntos\n", gameManager->getGame(i).getRefran().getRefran(), gameManager->getName(i), gameManager->getGame(i).getScore(i));
+                                    send(i, buffer, sizeof(buffer), 0);
+                                    send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                                    gameManager->deleteGame(i);
+                                 }
+                                 else
+                                 {
+                                    sprintf(buffer, "+Ok. %c aparece %d veces. FRASE: %s\n", c, ocurrences, gameManager->getGame(i).getRefran().getRefranOculto());
+                                    send(i, buffer, sizeof(buffer), 0);
+                                    send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
+                                 }
+                              }
+                           }
                         }
-                     }
-                     else if (strncmp(buffer, "VOCAL ", strlen("VOCAL ")) == 0)
-                     {
                      }
                      else if (strncmp(buffer, "RESOLVER ", strlen("RESOLVER ")) == 0)
                      {

@@ -57,6 +57,8 @@ public:
     int findOcurrences(int userSocket, const char letter);
 
     void addPlayerScore(int userSocket, int multiplier);
+
+    void comprarVocal(int userSocket);
 };
 
 #endif
