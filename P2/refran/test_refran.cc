@@ -7,6 +7,22 @@ TEST(Refran, Constructor)
 {
     Refran refran(5);
 
-    //EXPECT_EQ(strcmp(refran.getRefran(), "Lo mejor de las cartas es no jugarlas."), 0);
-    //EXPECT_EQ(strcmp(refran.getRefranOculto(), "__ _____ __ ___ ______ __ __ ________."), 0);
+    EXPECT_EQ(strcmp(refran.getRefran(), "Marzo lluvioso, mayo copioso."), 0);
+    EXPECT_EQ(strcmp(refran.getRefranOculto(), "_____ ________, ____ _______."), 0);
+}
+
+TEST(Refran, solveRefran)
+{
+    Refran refran(5);
+
+    EXPECT_TRUE(refran.solveRefran("Marzo lluvioso, mayo copioso."));
+    EXPECT_TRUE(refran.solveRefran("Marzo lluvioso, mayo copioso.\n"));
+}
+
+TEST(Refran, findOcurrences)
+{
+    Refran refran(5);
+
+    EXPECT_EQ(refran.findOcurrences('o'), 7);
+    EXPECT_EQ(refran.findOcurrences('m'), 2);
 }
