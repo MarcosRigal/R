@@ -262,11 +262,11 @@ void GameManager::addPlayerScore(int userSocket, int multiplier)
         {
             if (games_[i].getSocketPlayer1() == userSocket)
             {
-                return games_[i].setScorePlayer1(50 * multiplier);
+                return games_[i].setScorePlayer1(games_[i].getScorePlayer1() + (50 * multiplier));
             }
             else if (games_[i].getSocketPlayer2() == userSocket)
             {
-                games_[i].setScorePlayer2(50 * multiplier);
+                games_[i].setScorePlayer2(games_[i].getScorePlayer1() + (50 * multiplier));
             }
         }
     }
@@ -288,4 +288,23 @@ void GameManager::comprarVocal(int userSocket)
             }
         }
     }
+}
+
+bool GameManager::hasBeenShown(int userSocket, const char letter)
+{
+    for (int i = 0; i < (int)games_.size(); i++)
+    {
+        if (games_[i].getNumberOfPlayers() == 2)
+        {
+            if (games_[i].getSocketPlayer1() == userSocket)
+            {
+                return games_[i].hasBeenShown(letter);
+            }
+            else if (games_[i].getSocketPlayer2() == userSocket)
+            {
+                return games_[i].hasBeenShown(letter);
+            }
+        }
+    }
+    return -1;
 }

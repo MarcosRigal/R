@@ -59,6 +59,8 @@ public:
     void addPlayerScore(int userSocket, int multiplier);
 
     void comprarVocal(int userSocket);
+
+    bool hasBeenShown(int userSocket, const char letter);
 };
 
 #endif

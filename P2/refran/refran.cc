@@ -15,8 +15,8 @@ Refran::Refran()
 void Refran::getRandomRefran()
 {
     srand(time(NULL));
-    //int nrand = (rand() % 5) + 1;
-    int nrand = 5;
+    int nrand = (rand() % 5) + 1;
+    //int nrand = 5;
     switch (nrand)
     {
     case 1:
@@ -84,4 +84,21 @@ int Refran::findOcurrences(const char letter)
     }
 
     return count;
+}
+
+bool Refran::hasBeenShown(const char letter)
+{
+    int i;
+    i = 0;
+    while (refranOculto_[i] != '.')
+    {
+        if (toupper(refranOculto_[i]) == toupper(letter))
+        {
+            return true;
+        }
+
+        i++;
+    }
+
+    return false;
 }

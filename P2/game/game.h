@@ -50,6 +50,7 @@ public:
 
     bool addPlayer(int socketPlayer);
     inline int findOcurrences(const char letter) { return refran_.findOcurrences(letter); }
+    inline bool hasBeenShown(const char letter) { return refran_.hasBeenShown(letter); }
 };
 
 #endif

@@ -28,6 +28,7 @@ public:
     bool solveRefran(const char *refran);
 
     int findOcurrences(const char letter);
+    bool hasBeenShown(const char letter);
 };
 
 #endif

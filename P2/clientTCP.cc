@@ -124,6 +124,32 @@ int main(int argc, char const *argv[])
          {
             myTurn = true;
          }
+         if (strncmp(buffer, "+Ok. CONSONANTE: ", strlen("+Ok. CONSONANTE: ")) == 0)
+         {
+            if ((buffer[27] == '0') && (myTurn == false))
+            {
+               printf("+Ok. Turno de partida\n");
+               myTurn = true;
+            }
+            else if ((buffer[27] == '0') && (myTurn == true))
+            {
+               printf("+Ok. Turno del otro jugador\n");
+               myTurn = false;
+            }
+         }
+         if (strncmp(buffer, "+Ok. VOCAL: ", strlen("+Ok. VOCAL: ")) == 0)
+         {
+            if ((buffer[22] == '0') && (myTurn == false))
+            {
+               printf("+Ok. Turno de partida\n");
+               myTurn = true;
+            }
+            else if ((buffer[22] == '0') && (myTurn == true))
+            {
+               printf("+Ok. Turno del otro jugador\n");
+               myTurn = false;
+            }
+         }
          if (strcmp(buffer, "+Ok. Ha salido el otro jugador. Finaliza la partida\n") == 0)
             playing = false;
          if (strcmp(buffer, "+Ok. Desconexión procesada.\n") == 0)
