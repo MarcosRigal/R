@@ -4,7 +4,7 @@ GTEST_DIR = /home/marcos/Repositories/R/P2/googletest-release-1.8.1/googletest
 
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
-CXXFLAGS += -g -Wall -Wextra -pthread -std=gnu++11
+CXXFLAGS += -g -Wall -Wextra -Wno-multichar -Wno-type-limits -pthread -std=gnu++11
 
 TESTS = test_gameManager
 
@@ -32,9 +32,9 @@ gtest.a : gtest-all.o
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-gameManager.o : gameManager.h gameManager.cc $(DIR_SYSTEM)game/game.cc $(DIR_SYSTEM)game/game.h 
+gameManager.o : gameManager.h gameManager.cc $(DIR_SYSTEM)game/game.cc $(DIR_SYSTEM)game/game.h $(DIR_SYSTEM)refran/refran.cc $(DIR_SYSTEM)refran/refran.h
 
-test_gameManager.o : test_gameManager.cc gameManager.h gameManager.cc $(DIR_SYSTEM)game/game.cc $(DIR_SYSTEM)game/game.h 
+test_gameManager.o : test_gameManager.cc gameManager.h gameManager.cc $(DIR_SYSTEM)game/game.cc $(DIR_SYSTEM)game/game.h $(DIR_SYSTEM)refran/refran.cc $(DIR_SYSTEM)refran/refran.h
 
-test_gameManager : gameManager.o test_gameManager.o gtest_main.a $(DIR_SYSTEM)game/game.cc $(DIR_SYSTEM)game/game.h 
+test_gameManager : gameManager.o test_gameManager.o gtest_main.a $(DIR_SYSTEM)game/game.cc $(DIR_SYSTEM)game/game.h $(DIR_SYSTEM)refran/refran.cc $(DIR_SYSTEM)refran/refran.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@

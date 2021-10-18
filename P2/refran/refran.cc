@@ -6,9 +6,8 @@
 #include "refran.h"
 using namespace std;
 
-Refran::Refran(int userSocket)
+Refran::Refran()
 {
-    userSocket_ = userSocket;
     getRandomRefran();
     hideRefran(refran_);
 }

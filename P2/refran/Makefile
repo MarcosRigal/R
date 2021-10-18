@@ -2,7 +2,7 @@ GTEST_DIR = /home/marcos/Repositories/R/P2/googletest-release-1.8.1/googletest
 
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
-CXXFLAGS += -g -Wall -Wextra -pthread -std=gnu++11
+CXXFLAGS += -g -Wall -Wno-multichar -Wno-type-limits -Wextra -pthread -std=gnu++11
 
 TESTS = test_refran
 

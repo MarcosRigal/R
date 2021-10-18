@@ -1,5 +1,4 @@
 #include "../P2/systemFunctions/systemFunctions.h"
-#include "../P2/refran/refran.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -276,6 +275,17 @@ int main()
                      {
                         send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
                      }
+                     ///TODO
+                     else if (strncmp(buffer, "VOCAL ", strlen("VOCAL ")) == 0)
+                     {
+                     }
+                     else if (strncmp(buffer, "CONSONANTE ", strlen("CONSONANTE ")) == 0)
+                     {
+                     }
+                     else if (strncmp(buffer, "RESOLVER ", strlen("RESOLVER ")) == 0)
+                     {
+                     }
+                     ///TODO
                      else if (strncmp(buffer, "PUNTUACION", strlen("PUNTUACION")) == 0)
                      {
                         sprintf(buffer, "+Ok. Su puntuación es: %d\n", gameManager->getScore(i));

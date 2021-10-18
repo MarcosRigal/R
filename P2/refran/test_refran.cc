@@ -5,7 +5,7 @@ using namespace std;
 
 TEST(Refran, Constructor)
 {
-    Refran refran(5);
+    Refran refran;
 
     EXPECT_EQ(strcmp(refran.getRefran(), "Marzo lluvioso, mayo copioso."), 0);
     EXPECT_EQ(strcmp(refran.getRefranOculto(), "_____ ________, ____ _______."), 0);
@@ -13,7 +13,7 @@ TEST(Refran, Constructor)
 
 TEST(Refran, solveRefran)
 {
-    Refran refran(5);
+    Refran refran;
 
     EXPECT_TRUE(refran.solveRefran("Marzo lluvioso, mayo copioso."));
     EXPECT_TRUE(refran.solveRefran("Marzo lluvioso, mayo copioso.\n"));
@@ -21,7 +21,7 @@ TEST(Refran, solveRefran)
 
 TEST(Refran, findOcurrences)
 {
-    Refran refran(5);
+    Refran refran;
 
     EXPECT_EQ(refran.findOcurrences('o'), 7);
     EXPECT_EQ(refran.findOcurrences('m'), 2);

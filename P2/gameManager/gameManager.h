@@ -4,6 +4,7 @@
 #include <vector>
 #include "../user/user.h"
 #include "../game/game.h"
+#include "../refran/refran.h"
 using namespace std;
 
 class GameManager

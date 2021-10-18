@@ -3,6 +3,8 @@
 
 using namespace std;
 
+#include "../refran/refran.h"
+
 class Game
 {
 private:
@@ -13,6 +15,8 @@ private:
     int scorePlayer2_;
 
     int numberOfPlayers_;
+
+    Refran refran;
 
 public:
     Game()

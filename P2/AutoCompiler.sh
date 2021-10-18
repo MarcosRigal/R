@@ -3,6 +3,10 @@ cd user
 make
 ./test_user
 cd ..
+cd refran
+make
+./test_refran
+cd ..
 cd game
 make
 ./test_game
