@@ -42,38 +42,16 @@ void Refran::getRandomRefran()
 
 void Refran::hideRefran(const char *refran)
 {
-    int coma = ',';
-    char *pch;
-    char copyRefran[250];
-    strcpy(copyRefran, refran);
-
-    pch = strtok(copyRefran, " ");
-    while (pch != NULL)
+    strcpy(refranOculto_, refran);
+    for (int i = 0; refran[i] != '.'; i++)
     {
-        if (strchr(pch, coma))
+        if (refran[i] != '\0' && refran[i] != ' ' && refran[i] != '.' && refran[i] != ',' && refran[i] != ';' && refran[i] != '¡' && refran[i] != '!' && refran[i] != '¿' && refran[i] != '?' && refran[i] != ':')
         {
-            for (size_t i = 0; i < strlen(pch) - 1; i++)
-            {
-                strcat(refranOculto_, "_");
-            }
-            strcat(refranOculto_, ",");
+            refranOculto_[i] = '_';
         }
         else
         {
-            for (size_t i = 0; i < strlen(pch); i++)
-            {
-                strcat(refranOculto_, "_");
-            }
-        }
-
-        pch = strtok(NULL, " .");
-        if (pch != NULL)
-        {
-            strcat(refranOculto_, " ");
-        }
-        else
-        {
-            strcat(refranOculto_, ".");
+            refranOculto_[i] = refran_[i];
         }
     }
 }
@@ -100,6 +78,7 @@ int Refran::findOcurrences(const char letter)
         if (toupper(refran_[i]) == toupper(letter))
         {
             count++;
+            refranOculto_[i] = refran_[i];
         }
 
         i++;

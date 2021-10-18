@@ -25,4 +25,5 @@ TEST(Refran, findOcurrences)
 
     EXPECT_EQ(refran.findOcurrences('o'), 7);
     EXPECT_EQ(refran.findOcurrences('m'), 2);
+    EXPECT_EQ(strcmp(refran.getRefranOculto(), "M___o _____o_o, m__o _o__o_o."), 0);
 }
