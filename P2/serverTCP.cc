@@ -125,20 +125,6 @@ int main()
 
                         send(New_Server_Socket, buffer, sizeof(buffer), 0);
                      }
-
-                     /*
-
-                        Esta parte informa a los clientes de que se ha conectado alguién
-
-                        for (j = 0; j < (numClientes - 1); j++)
-                        {
-
-                           bzero(buffer, sizeof(buffer));
-                           sprintf(buffer, "Nuevo Cliente conectado: %d\n", New_Server_Socket);
-                           send(arrayClientes[j], buffer, sizeof(buffer), 0);
-                        }
-                  
-                        */
                      else
                      {
                         bzero(buffer, sizeof(buffer));
@@ -154,12 +140,11 @@ int main()
                   bzero(buffer, sizeof(buffer));
                   fgets(buffer, sizeof(buffer), stdin);
 
-                  //Controlar si se ha introducido "SALIR", cerrando todos los sockets y finalmente saliendo del servidor. (implementar)
+                  //Controlar si se ha introducido "SALIR", cerrando todos los sockets y finalmente saliendo del servidor.
                   if (strcmp(buffer, "SALIR\n") == 0)
                   {
                      exitHandler(SIGINT);
                   }
-                  //Mensajes que se quieran mandar a los clientes (implementar)
                }
                else
                {
@@ -277,7 +262,7 @@ int main()
 
                         else
                         {
-                           strcpy(buffer, "-Err. Todas las salas están ocupadas vuelva a intentarlo más tarde\n");
+                           strcpy(buffer, "-Err. Todas las salas están llenas vuelva a intentarlo más tarde\n");
                            send(i, buffer, sizeof(buffer), 0);
                         }
                      }
@@ -288,28 +273,18 @@ int main()
 
                      else if (strncmp(buffer, "CHAT ", strlen("CHAT ")) == 0)
                      {
-                        printf("%d\n", gameManager->findPair(i));
                         send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
                      }
-
+                     else if (strncmp(buffer, "PUNTUACION", strlen("PUNTUACION")) == 0)
+                     {
+                        sprintf(buffer, "+Ok. Su puntuación es: %d\n", gameManager->getScore(i));
+                        send(i, buffer, sizeof(buffer), 0);
+                     }
                      else
                      {
                         strcpy(buffer, "--Err. Solicitud rechazada\n");
                         send(i, buffer, sizeof(buffer), 0);
                      }
-
-                     /*
-                        //Esta parte envía el mensaje al otro
-                        snprintf(identificador, (sizeof(buffer) + 6), "<%d>: %s", i, buffer);
-                        bzero(buffer, sizeof(buffer));
-
-                        strcpy(buffer, identificador);
-
-                        printf("%s to %d\n", buffer, gameManager->findPair(i));
-
-                        send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
-                     
-                     */
                   }
                   //Si el cliente introdujo ctrl+c
                   if (recibidos == 0)
@@ -332,6 +307,8 @@ void closedClient(int socket, fd_set *readfds, int *numClientes, int arrayClient
    printf("El socket %d, se ha desconectado\n", i);
    char buffer[250];
    int j;
+   strcpy(buffer, "+Ok. Desconexión procesada.\n");
+   send(i, buffer, sizeof(buffer), 0);
    strcpy(buffer, "+Ok. Ha salido el otro jugador. Finaliza la partida\n");
    send(gameManager->findPair(i), buffer, sizeof(buffer), 0);
 
@@ -348,15 +325,6 @@ void closedClient(int socket, fd_set *readfds, int *numClientes, int arrayClient
    (*numClientes)--;
    gameManager->unlogUser(i);
    gameManager->deleteGame(i);
-   /*
-   Informa al resto de clientes de que alguien se ha desconectado
-   bzero(buffer, sizeof(buffer));
-   sprintf(buffer, "Desconexión del cliente: %d\n", socket);
-
-   for (j = 0; j < (*numClientes); j++)
-      if (arrayClientes[j] != socket)
-         send(arrayClientes[j], buffer, sizeof(buffer), 0);
-   */
 }
 
 void exitHandler(int signum)

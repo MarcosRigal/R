@@ -16,9 +16,11 @@ using namespace std;
 bool user = false;
 bool password = false;
 bool playing = false;
+bool myTurn = false;
 
 int main(int argc, char const *argv[])
 {
+   clear();
    /*
         Aquí compruebo que el programa se ha llamado correctamente
     */
@@ -104,11 +106,28 @@ int main(int argc, char const *argv[])
          if (strcmp(buffer, "+Ok. Usuario validado\n") == 0)
             password = true;
          if (strncmp(buffer, "+Ok. Empieza la partida.", strlen("+Ok. Empieza la partida.")) == 0)
+         {
             playing = true;
+            clear();
+            printf("%s", buffer);
+            if (myTurn == true)
+            {
+               printf("+Ok. Turno de partida\n");
+            }
+
+            else if (myTurn == false)
+            {
+               printf("+Ok. Turno del otro jugador\n");
+            }
+         }
          if (strcmp(buffer, "+Ok. Petición Recibida. quedamos a la espera de más jugadores\n") == 0)
-            playing = true;
+         {
+            myTurn = true;
+         }
          if (strcmp(buffer, "+Ok. Ha salido el otro jugador. Finaliza la partida\n") == 0)
             playing = false;
+         if (strcmp(buffer, "+Ok. Desconexión procesada.\n") == 0)
+            fin = 1;
       }
       else
       {
@@ -120,17 +139,17 @@ int main(int argc, char const *argv[])
 
             fgets(buffer, sizeof(buffer), stdin);
 
-            if (strcmp(buffer, "SALIR\n") == 0)
-            {
-               fin = 1;
-            }
-            else if ((strncmp(buffer, "PASSWORD", strlen("PASSWORD")) == 0) && (user == false))
+            if ((strncmp(buffer, "PASSWORD", strlen("PASSWORD")) == 0) && (user == false))
             {
                printf("-Err. No puede introducir la contraseña antes que el nombre de usuario\n");
             }
-            else if ((strncmp(buffer, "REGISTRO", strlen("REGISTRO")) == 0) && (user == true))
+            else if ((strncmp(buffer, "PASSWORD", strlen("PASSWORD")) == 0) && (password == true))
             {
                printf("-Err. Ya ha iniciado sesión\n");
+            }
+            else if ((strncmp(buffer, "REGISTRO", strlen("REGISTRO")) == 0) && (user == true))
+            {
+               printf("-Err. Ya está registrado\n");
             }
             else if ((strncmp(buffer, "USUARIO ", strlen("USUARIO ")) == 0) && (user == true))
             {
@@ -144,25 +163,65 @@ int main(int argc, char const *argv[])
             {
                printf("-Err. No puede volver a iniciar partida\n");
             }
-            else if ((strncmp(buffer, "CONSONANTE", strlen("CONSONANTE")) == 0) && (playing == false))
+            else if ((strncmp(buffer, "CONSONANTE ", strlen("CONSONANTE ")) == 0) && ((playing == false) || (myTurn == false)))
             {
-               printf("-Err. Debe estar en una partida para hacer eso\n");
+               if (playing == false)
+               {
+                  printf("-Err. Debe estar en una partida para hacer eso\n");
+               }
+               else if (myTurn == false)
+               {
+                  printf("-Err. Debe esperar su turno\n");
+               }
             }
-            else if ((strncmp(buffer, "VOCAL", strlen("VOCAL")) == 0) && (playing == false))
+            else if ((strncmp(buffer, "VOCAL ", strlen("VOCAL ")) == 0) && ((playing == false) || (myTurn == false)))
             {
-               printf("-Err. Debe estar en una partida para hacer eso\n");
+               if (playing == false)
+               {
+                  printf("-Err. Debe estar en una partida para hacer eso\n");
+               }
+               else if (myTurn == false)
+               {
+                  printf("-Err. Debe esperar su turno\n");
+               }
             }
-            else if ((strncmp(buffer, "RESOLVER", strlen("RESOLVER")) == 0) && (playing == false))
+            else if ((strncmp(buffer, "RESOLVER ", strlen("RESOLVER ")) == 0) && ((playing == false) || (myTurn == false)))
             {
-               printf("-Err. Debe estar en una partida para hacer eso\n");
+               if (playing == false)
+               {
+                  printf("-Err. Debe estar en una partida para hacer eso\n");
+               }
+               else if (myTurn == false)
+               {
+                  printf("-Err. Debe esperar su turno\n");
+               }
             }
-            else if ((strncmp(buffer, "PUNTUACION", strlen("PUNTUACION")) == 0) && (playing == false))
+            else if ((strncmp(buffer, "PUNTUACION", strlen("PUNTUACION")) == 0) && ((playing == false) || (myTurn == false)))
             {
-               printf("-Err. Debe estar en una partida para hacer eso\n");
+               if (playing == false)
+               {
+                  printf("-Err. Debe estar en una partida para hacer eso\n");
+               }
+               else if (myTurn == false)
+               {
+                  printf("-Err. Debe esperar su turno\n");
+               }
+            }
+            else if ((strncmp(buffer, "CHAT ", strlen("CHAT ")) == 0) && ((playing == false) || (myTurn == false)))
+            {
+               if (playing == false)
+               {
+                  printf("-Err. Debe estar en una partida para hacer eso\n");
+               }
+               else if (myTurn == false)
+               {
+                  printf("-Err. Debe esperar su turno\n");
+               }
             }
             else
             {
                send(sd, buffer, sizeof(buffer), 0);
+               //CAMBIAR MYTURN AL ENVIAR
             }
          }
       }

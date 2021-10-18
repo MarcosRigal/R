@@ -46,6 +46,8 @@ public:
     bool checkPassword(int userSocket, const char *password);
 
     bool deleteGame(int userSocket);
+
+    int getScore(int userSocket);
 };
 
 #endif

@@ -182,3 +182,23 @@ bool GameManager::deleteGame(int userSocket)
     }
     return false;
 }
+
+int GameManager::getScore(int userSocket)
+{
+    for (int i = 0; i < (int)games_.size(); i++)
+    {
+        if (games_[i].getNumberOfPlayers() == 2)
+        {
+            if (games_[i].getSocketPlayer1() == userSocket)
+            {
+                return games_[i].getScorePlayer1();
+            }
+            else if (games_[i].getSocketPlayer2() == userSocket)
+            {
+                return games_[i].getScorePlayer2();
+            }
+        }
+    }
+
+    return -1;
+}
