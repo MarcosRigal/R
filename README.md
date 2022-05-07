@@ -1,5 +1,5 @@
 <div align="center">
-    <img width="100%" src="https://ih1.redbubble.net/image.1066412296.0216/pp,840x830-pad,1000x1000,f8f8f8.u1.jpg" alt="FOTO">
+    <img width="100%" src="https://concepto.de/wp-content/uploads/2018/09/redes-informaticas-e1537289477478.jpg" alt="FOTO">
 </div>
 
 # Instructions:
